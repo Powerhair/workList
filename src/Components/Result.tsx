@@ -1,6 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../app/store";
+const pdfMake = require("pdfmake/build/pdfmake");
+const pdfFonts = require("pdfmake/build/vfs_fonts");
+
+// Configure virtual file system of pdfMake
+pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
 const Result = () => {
   const results = useSelector((state: RootState) => state.quiz.results);
@@ -48,10 +53,23 @@ const Result = () => {
   const fourCableLengthCalculation = () => {
     // Логика для расчета длины четырехжильного кабеля
     const distanceOfSystem = Number(results.distanceToSystem);
-    if (distanceOfSystem < 5) {
-      setLengthCableFour(5);
+
+    if (!tagSensor && !slotSensor) {
+      setLengthCableFour(0); // Если оба false, длина кабеля = 0
+    } else if (tagSensor !== slotSensor) {
+      // Если один true, а другой false
+      if (distanceOfSystem < 5) {
+        setLengthCableFour(5);
+      } else {
+        setLengthCableFour(Math.ceil(distanceOfSystem / 5) * 5);
+      }
     } else {
-      setLengthCableFour(Math.ceil(distanceOfSystem / 5) * 5);
+      // Если оба true
+      if (distanceOfSystem < 5) {
+        setLengthCableFour(10); // Учитываем два датчика
+      } else {
+        setLengthCableFour(Math.ceil((distanceOfSystem * 2) / 5) * 5); // Учитываем два датчика
+      }
     }
   };
 
@@ -102,6 +120,108 @@ const Result = () => {
     }
   };
 
+  const saveAsPDF = () => {
+    const currentDate = new Date().toLocaleDateString(); // Получаем текущую дату в формате локали
+
+    const docDefinition = {
+      content: [
+        {
+          text: `${results.nameOfProduct}`,
+          style: "header",
+          fontSize: 18,
+          bold: true,
+          margin: [0, 0, 0, 10],
+        },
+        {
+          style: "tablesContainer",
+          table: {
+            widths: ["*", 20, "*"], // Ширина колонок: первая таблица, вертикальная линия, вторая таблица
+            body: [
+              [
+                {
+                  // Первая таблица
+                  table: {
+                    widths: ["*", "*"],
+                    body: [
+                      [
+                        { text: "Основная комплектация", style: "tableHeader" },
+                        "",
+                      ],
+                      ["Количество камер:", cameras],
+                      ["Тип камер", results.typeOfCameras],
+                      ["Количество объективов:", cameras],
+                      ["Тип объективов", results.typeOfLens],
+                      ["Длина ламп", widthLed],
+                      ["Количество ламп:", led],
+                      ...(tagSensor ? [["Датчик метки", ""]] : []),
+                      ...(slotSensor ? [["Щелевой датчик", ""]] : []),
+                      ...(encoder ? [["Энкодер", "Крепление энкодера"]] : []),
+                      ...(lightSignal ? [["Светозвуковая колонна", ""]] : []),
+                      ["Монитор", ""],
+                      ["Крепление монитора", ""],
+                    ],
+                  },
+                  layout: "lightHorizontalLines",
+                },
+                { text: "" },
+                {
+                  // Вторая таблица
+                  table: {
+                    widths: ["*", "*"],
+                    body: [
+                      [{ text: "Расходники", style: "tableHeader" }, ""],
+                      ["Четырехжильный кабель:", `${lengthCableFour} м`],
+                      ...(lengthCableFive !== 0
+                        ? [["Пятижильный кабель:", `${lengthCableFive} м`]]
+                        : []),
+                      ["Количество кареток:", `${slider} шт`],
+                      ["Крепление для камер:", `${cameras} шт`],
+                      ["Набор винтов для крепления камер:", `${cameras} шт`],
+                      ["Набор винтов для крепления ламп:", `${led} шт`],
+                      ["Набор винтов для крепления датчиков", ""],
+                      ["Кабель питания ПК", ""],
+                      ["Сигнальный кабель монитора", `${lengthCableFour} м`],
+                      ["Удлинитель для USB: 1м", ""],
+                      ["Мышь компьютерная", ""],
+                    ],
+                  },
+                  layout: "lightHorizontalLines",
+                },
+              ],
+            ],
+          },
+        },
+        {
+          text: `Дата: ${currentDate}`, // Текущая дата
+          margin: [0, 20, 0, 0], // Отступы сверху, снизу
+          alignment: "right", // Выравнивание по правому краю
+        },
+      ],
+      styles: {
+        header: {
+          fontSize: 18,
+          bold: true,
+          margin: [0, 0, 0, 10],
+        },
+        tableHeader: {
+          fontSize: 14,
+          bold: true,
+          margin: [0, 5],
+        },
+        verticalLineStyle: {
+          fontSize: 24,
+          alignment: "center",
+          margin: [0, 0, 0, 0], // Убираем отступы
+        },
+        tablesContainer: {
+          margin: [0, 0, 0, 0], // Убираем отступы
+        },
+      },
+    };
+
+    pdfMake.createPdf(docDefinition).download("results.pdf");
+  };
+
   useEffect(() => {
     choiceOfSensors();
     setCameras(Number(results.quantityOfCameras));
@@ -124,7 +244,6 @@ const Result = () => {
         <h2 className="text-3xl font-bold mb-7 text-center text-gray-800">
           {results.nameOfProduct}
         </h2>
-
         {/* Контейнер для двух столбцов */}
         <div className="flex flex-col md:flex-row justify-between">
           {/* Основная комплектация */}
@@ -254,7 +373,13 @@ const Result = () => {
           </div>
         </div>
 
-        <div className="text-center mt-6">
+        <div className="text-center mt-6 flex flex-col md:flex-row justify-evenly">
+          <button
+            onClick={saveAsPDF}
+            className="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-6 rounded-lg transition-colors duration-200"
+          >
+            Сохранить PDF
+          </button>
           <button
             onClick={() => window.location.reload()}
             className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-lg transition-colors duration-200"

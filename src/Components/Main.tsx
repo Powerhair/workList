@@ -41,12 +41,31 @@ const Main = () => {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    // Проверка, чтобы были только цифры
-    if (/^\d*$/.test(value)) {
-      setSelectedAnswer(value);
-      setError(""); // Сброс ошибки при правильном вводе
+
+    // Если тип вопроса input и нужно ввести только цифры
+    if (
+      currentQuestion.name === "quantityOfCameras" ||
+      currentQuestion.name === "widthOfPrint" ||
+      currentQuestion.name === "distanceToSystem" ||
+      currentQuestion.name === "distanceToLightSignal"
+    ) {
+      // Проверка на числа
+      if (/^\d*$/.test(value)) {
+        setSelectedAnswer(value);
+        setError(""); // Сброс ошибки при правильном вводе
+      } else {
+        setError("Пожалуйста, введите только цифры"); // Сообщение об ошибке
+      }
     } else {
-      setError("Пожалуйста, введите только цифры"); // Сообщение об ошибке
+      // Если ввод может быть произвольным
+      setSelectedAnswer(value);
+      setError(""); // Очищаем ошибку, так как это произвольный ввод
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      handleNext(); // Вызываем функцию handleNext при нажатии Enter
     }
   };
 
@@ -86,6 +105,7 @@ const Main = () => {
                 type="text"
                 value={selectedAnswer}
                 onChange={handleInputChange}
+                onKeyDown={handleKeyDown} // Добавляем обработчик для клавиши Enter
                 className="border border-gray-300 p-3 w-full rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 placeholder="Введите ваш ответ"
               />
