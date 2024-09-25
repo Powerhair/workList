@@ -376,7 +376,7 @@ const Result = () => {
         <div className="text-center mt-6 flex flex-col md:flex-row justify-evenly">
           <button
             onClick={saveAsPDF}
-            className="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-6 rounded-lg transition-colors duration-200"
+            className="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-6 rounded-lg transition-colors duration-200 mb-2 md:mb-0"
           >
             Сохранить PDF
           </button>
