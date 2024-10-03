@@ -84,7 +84,7 @@ const CreatePdf: React.FC<CreatePdfProps> = (props) => {
               createTableRow("Тип камер:", results.typeOfCameras),
               createTableRow("Количество объективов:", cameras),
               createTableRow("Тип объективов:", results.typeOfLens),
-              createTableRow("Длина ламп:", widthLed),
+              createTableRow("Длина ламп:", `${widthLed} мм`),
               createTableRow("Количество ламп:", led),
               ...createConditionalRow(tagSensor, "Датчик метки", ""),
               ...createConditionalRow(slotSensor, "Щелевой датчик", ""),
