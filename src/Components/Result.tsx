@@ -13,36 +13,46 @@ const Result = () => {
   const [lengthCableForSignal, setLengthCableForSignal] = useState(0); // Длина пятижильного кабеля
   const [widthLed, setWidthLed] = useState(100);
   const [slider, setSlider] = useState(1);
+  
+  // Новое состояние для винтов для крепления датчиков
+  const [screwForSensors, setScrewForSensors] = useState(0); 
 
   const [tagSensor, setTagSensor] = useState(false); //
   const [slotSensor, setSlotSensor] = useState(false); //
   const [encoder, setEncoder] = useState(false); //
-  const [lightSignal, setLightSignal] = useState(false); //
+  const [lightSignal, setLightSignal] = useState(false); // 
 
   const choiceOfSensors = () => {
     if (results.tagSensor === "Да") {
-      // Примерная логика
       setTagSensor(true);
     } else {
       setTagSensor(false);
     }
     if (results.slotSensor === "Да") {
-      // Примерная логика
       setSlotSensor(true);
     } else {
       setSlotSensor(false);
     }
     if (results.encoder === "Да") {
-      // Примерная логика
       setEncoder(true);
     } else {
       setEncoder(false);
     }
     if (results.lightSignal === "Да") {
-      // Примерная логика
       setLightSignal(true);
     } else {
       setLightSignal(false);
+    }
+  };
+
+  const calculateScrewForSensors = () => {
+    // Логика для расчета количества винтов для крепления датчиков
+    if (tagSensor && slotSensor) {
+      setScrewForSensors(2); // 2 датчика
+    } else if (tagSensor || slotSensor) {
+      setScrewForSensors(1); // 1 датчик
+    } else {
+      setScrewForSensors(0); // Нет датчиков
     }
   };
 
@@ -123,6 +133,7 @@ const Result = () => {
     fourCableLengthCalculation();
     fiveCableLengthCalculation();
     choiceWidthLed();
+    calculateScrewForSensors(); // Вызываем новую функцию
     setSlider(
       cameras +
         led +
@@ -136,7 +147,7 @@ const Result = () => {
     <div className="flex items-center justify-center min-h-screen bg-gray-100 p-4">
       <div className="bg-white shadow-lg rounded-lg p-8 w-full max-w-6xl">
         <h2 className="text-3xl font-bold mb-7 text-center text-gray-800">
-          {results.nameOfProduct}
+          Объект: {results.nameOfProduct}
         </h2>
         {/* Контейнер для двух столбцов */}
         <div className="flex flex-col md:flex-row justify-between">
@@ -236,6 +247,17 @@ const Result = () => {
                 </span>{" "}
                 {cameras} шт
               </p>
+
+              {/* Поле для крепления датчиков */}
+              {screwForSensors > 0 && (
+                <p className="mb-2">
+                  <span className="font-semibold">
+                    Набор винтов для крепления датчиков:
+                  </span>{" "}
+                  {screwForSensors} шт
+                </p>
+              )}
+
               <p className="mb-2">
                 <span className="font-semibold">
                   Набор винтов для крепления ламп:
@@ -244,8 +266,8 @@ const Result = () => {
               </p>
               <p className="mb-2">
                 <span className="font-semibold">
-                  Набор винтов для крепления датчиков
-                </span>
+                  Шарнирный соединитель 20х20:
+                </span>{" "}{led*2} шт
               </p>
 
               <p className="mb-2">
@@ -281,6 +303,8 @@ const Result = () => {
             slotSensor={slotSensor}
             encoder={encoder}
             lightSignal={lightSignal}
+            nameOfProduct={results.nameOfProduct}
+            screwForSensors={screwForSensors}
           />
           <button
             onClick={() => window.location.reload()}
