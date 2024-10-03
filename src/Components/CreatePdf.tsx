@@ -102,7 +102,7 @@ const CreatePdf: React.FC<CreatePdfProps> = (props) => {
               createTableRow("Набор винтов для крепления датчиков:", `${screwForSensors} шт`),
               createTableRow("Шарнирный соединитель 20х20:", `${led * 2} шт`),
               createTableRow("Кабель питания ПК", ""),
-              createTableRow("Сигнальный кабель монитора:", `${lengthCableForSignal} м`),
+              createTableRow("Сигнальный кабель монитора:", `${lengthCableFour} м`),
               createTableRow("Удлинитель для USB:", "1м"),
               createTableRow("Мышь компьютерная", ""),
             ],
