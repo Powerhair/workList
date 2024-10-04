@@ -19,6 +19,7 @@ interface CreatePdfProps {
   lightSignal: boolean;
   nameOfProduct: string;
   screwForSensors: number;
+  controlCabinetLocation: string;
 }
 
 const CreatePdf: React.FC<CreatePdfProps> = (props) => {
@@ -37,6 +38,7 @@ const CreatePdf: React.FC<CreatePdfProps> = (props) => {
     lightSignal,
     nameOfProduct,
     screwForSensors,
+    controlCabinetLocation
   } = props;
 
   const createCheckbox = () => ({
@@ -105,6 +107,7 @@ const CreatePdf: React.FC<CreatePdfProps> = (props) => {
               createTableRow("Сигнальный кабель монитора:", `${lengthCableFour} м`),
               createTableRow("Удлинитель для USB:", "1м"),
               createTableRow("Мышь компьютерная", ""),
+              createTableRow(controlCabinetLocation, ""),
             ],
           },
           layout: {

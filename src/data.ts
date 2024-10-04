@@ -41,7 +41,6 @@ export const questions = [
     question: "Введите максимальнуюю ширину полотна в мм",
     type: "input",
   },
-
   {
     name: "distanceToSystem",
     question:
@@ -62,7 +61,7 @@ export const questions = [
   },
   {
     name: "encoder",
-    question: "Необходимо наличие щелевого Энкодера?",
+    question: "Необходимо наличие Энкодера?",
     type: "choice",
     options: ["Да", "Нет"],
   },
@@ -77,5 +76,11 @@ export const questions = [
     question:
       "Введите расстояние от шкафа управления до светозвукоовой колонны в метрах. Если светозвуковая колонна устанавливается на шкаф укажите 0",
     type: "input",
+  },
+  {
+    name: "controlLocation",
+    question: "Где будет распологаться шкаф управления?",
+    type: "choice",
+    options: ["На стене", "На оборудовании заказчика", "На полу"]
   },
 ];

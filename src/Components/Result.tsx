@@ -21,6 +21,7 @@ const Result = () => {
   const [slotSensor, setSlotSensor] = useState(false); //
   const [encoder, setEncoder] = useState(false); //
   const [lightSignal, setLightSignal] = useState(false); // 
+  const [controlCabinetLocation, setControlCabinetLocation] = useState('');
 
   const choiceOfSensors = () => {
     if (results.tagSensor === "Да") {
@@ -44,6 +45,16 @@ const Result = () => {
       setLightSignal(false);
     }
   };
+
+  const choiceOfLocationControlCabinet = () => {
+    if (results.controlLocation === "На стене") {
+      setControlCabinetLocation("Крепеж для установки шкафа на стену")
+    } else if (results.controlLocation === "На оборудовании заказчика") {
+      setControlCabinetLocation("Крепеж для установки шкафа на оборудование заказчика")
+    } else if (results.controlCabinetLocation === "На полу") {
+      setControlCabinetLocation("Каркас из профиля 40х40 для шкафа")
+    }
+  }
 
   const calculateScrewForSensors = () => {
     // Логика для расчета количества винтов для крепления датчиков
@@ -133,7 +144,8 @@ const Result = () => {
     fourCableLengthCalculation();
     fiveCableLengthCalculation();
     choiceWidthLed();
-    calculateScrewForSensors(); // Вызываем новую функцию
+    calculateScrewForSensors();
+    choiceOfLocationControlCabinet()
     setSlider(
       cameras +
         led +
@@ -285,6 +297,9 @@ const Result = () => {
               <p className="mb-2">
                 <span className="font-semibold">Мышь компьютерная</span>
               </p>
+              <p className="mb-2">
+                <span className="font-semibold">{controlCabinetLocation}</span>
+              </p>
             </div>
           </div>
         </div>
@@ -305,6 +320,7 @@ const Result = () => {
             lightSignal={lightSignal}
             nameOfProduct={results.nameOfProduct}
             screwForSensors={screwForSensors}
+            controlCabinetLocation={controlCabinetLocation}
           />
           <button
             onClick={() => window.location.reload()}
