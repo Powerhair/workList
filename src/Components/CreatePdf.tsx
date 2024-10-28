@@ -41,6 +41,31 @@ const CreatePdf: React.FC<CreatePdfProps> = (props) => {
     controlCabinetLocation
   } = props;
 
+  function transliterate(text: string): string {
+    const translitMap: { [key: string]: string } = {
+        'А': 'A', 'Б': 'B', 'В': 'V', 'Г': 'G', 'Д': 'D',
+        'Е': 'E', 'Ё': 'Yo', 'Ж': 'Zh', 'З': 'Z', 'И': 'I',
+        'Й': 'Y', 'К': 'K', 'Л': 'L', 'М': 'M', 'Н': 'N',
+        'О': 'O', 'П': 'P', 'Р': 'R', 'С': 'S', 'Т': 'T',
+        'У': 'U', 'Ф': 'F', 'Х': 'Kh', 'Ц': 'Ts', 'Ч': 'Ch',
+        'Ш': 'Sh', 'Щ': 'Shch', 'Ъ': '', 'Ы': 'Y', 'Ь': '',
+        'Э': 'E', 'Ю': 'Yu', 'Я': 'Ya',
+        'а': 'a', 'б': 'b', 'в': 'v', 'г': 'g', 'д': 'd',
+        'е': 'e', 'ё': 'yo', 'ж': 'zh', 'з': 'z', 'и': 'i',
+        'й': 'y', 'к': 'k', 'л': 'l', 'м': 'm', 'н': 'n',
+        'о': 'o', 'п': 'p', 'р': 'r', 'с': 's', 'т': 't',
+        'у': 'u', 'ф': 'f', 'х': 'kh', 'ц': 'ts', 'ч': 'ch',
+        'ш': 'sh', 'щ': 'shch', 'ъ': '', 'ы': 'y', 'ь': '',
+        'э': 'e', 'ю': 'yu', 'я': 'ya'
+    };
+
+    return text.split('').map((char: string) => translitMap[char] || char)
+               .join('')
+               .replace(/\s+/g, '_') // Заменяем пробелы на подчеркивания
+               .replace(/[^\w\-_.]/g, ''); // Удаляем недопустимые символы
+  }
+
+
   const createCheckbox = () => ({
     canvas: [{ type: "rect", x: 0, y: 0, w: 10, h: 10 }],
     width: 10,
@@ -66,93 +91,51 @@ const CreatePdf: React.FC<CreatePdfProps> = (props) => {
 
   const saveAsPDF = () => {
     const currentDate = new Date().toLocaleDateString();
-
-    const docDefinition = {
-      content: [
-        {
-          text: `Объект: ${results.nameOfProduct}`,
-          style: "header",
-          fontSize: 18,
-          bold: true,
-          margin: [0, 0, 0, 10],
-        },
-        {
-          style: "tablesContainer",
-          table: {
-            widths: ["*", "auto"],
-            body: [
-              [{ text: "Основная комплектация", style: "tableHeader" }, ""],
-              createTableRow("Количество камер:", cameras),
-              createTableRow("Тип камер:", results.typeOfCameras),
-              createTableRow("Количество объективов:", cameras),
-              createTableRow("Тип объективов:", results.typeOfLens),
-              createTableRow("Длина ламп:", `${widthLed} мм`),
-              createTableRow("Количество ламп:", led),
-              ...createConditionalRow(tagSensor, "Датчик метки", ""),
-              ...createConditionalRow(slotSensor, "Щелевой датчик", ""),
-              ...createConditionalRow(encoder, "Энкодер, крепление энкодера", ""),
-              ...createConditionalRow(lightSignal, "Светозвуковая колонна", ""),
-              createTableRow("Монитор:", ""),
-              createTableRow("Крепление монитора", ""),
-              [{ text: "Расходники", style: "tableHeader" }, ""],
-              createTableRow("Четырехжильный кабель:", `${lengthCableFour} м`),
-              ...createConditionalRow(lengthCableFive !== 0, "Пятижильный кабель:", `${lengthCableFive} м`),
-              createTableRow("Количество кареток:", `${slider} шт`),
-              createTableRow("Крепление для камер:", `${cameras} шт`),
-              createTableRow("Набор винтов для крепления камер:", `${cameras} шт`),
-              createTableRow("Набор винтов для крепления ламп:", `${led} шт`),
-              createTableRow("Набор винтов для крепления датчиков:", `${screwForSensors} шт`),
-              createTableRow("Шарнирный соединитель 20х20:", `${led * 2} шт`),
-              createTableRow("Кабель питания ПК", ""),
-              createTableRow("Сигнальный кабель монитора:", `${lengthCableFour} м`),
-              createTableRow("Удлинитель для USB:", "1м"),
-              createTableRow("Мышь компьютерная", ""),
-              createTableRow(controlCabinetLocation, ""),
-            ],
-          },
-          layout: {
-            hLineWidth: (i: number, node: any) => {
-              if (i === node.table.body.length || i === 0 || i === 13) {
-                return 2;
-              }
-              return 0.5;
-            },
-            hLineColor: (i: number, node: any) => {
-              return i === node.table.body.length || i === 0 || i === 13 ? "black" : "gray";
-            },
-          },
-        },
-        {
-          text: "ФИО сотрудника, собиравшего отправку:",
-          margin: [0, 20, 0, 0],
-          alignment: "left",
-        },
-        createHorizontalLine(),
-        {
-          text: `Дата: ${currentDate}`,
-          margin: [0, 20, 0, 0],
-          alignment: "right",
-        },
-      ],
-      styles: {
-        header: {
-          fontSize: 18,
-          bold: true,
-          margin: [0, 0, 0, 10],
-        },
-        tableHeader: {
-          fontSize: 14,
-          bold: true,
-          margin: [0, 5],
-        },
-        tablesContainer: {
-          margin: [0, 0, 0, 0],
-        },
-      },
+    const transliteratedName = transliterate(nameOfProduct);
+    const fileName = `${nameOfProduct}_${currentDate}.pdf`;
+    
+    const pdfData = {
+        fileName,
+        fileData: {
+          results,
+            cameras,
+            led,
+            widthLed,
+            lengthCableFour,
+            lengthCableFive,
+            lengthCableForSignal,
+            slider,
+            tagSensor,
+            slotSensor,
+            encoder,
+            lightSignal,
+            nameOfProduct,
+            screwForSensors,
+            controlCabinetLocation
+        }
     };
 
-    pdfMake.createPdf(docDefinition).download(`${nameOfProduct}.pdf`);
-  };
+    console.log(pdfData)
+    fetch('http://127.0.0.1:3001/upload', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(pdfData),
+    })
+    .then(response => response.blob())
+    .then(blob => {
+        const url = window.URL.createObjectURL(new Blob([blob]));
+        const a = document.createElement('a');
+        a.style.display = 'none';
+        a.href = url;
+        a.download = fileName;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+    })
+    .catch(err => console.error('Ошибка при отправке данных на сервер:', err));
+};
 
   return (
     <button

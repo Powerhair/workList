@@ -1,3 +1,5 @@
+
+
 export const questions = [
   {
     name: "nameOfProduct",
@@ -10,17 +12,50 @@ export const questions = [
     type: "choice",
     options: ["Камера-код", "Камера-область"],
   },
+  // {
+  //   name: "widthOfPrint",
+  //   question: "Введите максимальнуюю ширину полотна в мм",
+  //   type: "input",
+  // },
+  // {
+  //   name: "speed",
+  //   question: "Введите скорость полотна в м/мин",
+  //   type: "input",
+  // },
   {
-    name: "quantityOfCameras",
-    question: "Введите количество камер",
+    name: "widthCodeElement",
+    question: "Сколько элементов кода по ширине?",
     type: "input",
   },
   {
-    name: "typeOfCameras",
-    question: "Ввыберите камеры",
-    type: "choice",
-    options: ["LANO-AH320-38GM", "LANO-AH500-24GM", "LANO-AH890-13GM"],
+    name: "widthOfCode",
+    question: "Введите ширину кода в мм",
+    type: "input",
   },
+  {
+    name: "distanceBetweenPoint",
+    question: "Введите расстояние между метками в мм",
+    type: "input",
+  },
+  {
+    name: "chooseCamera",
+    question: "Выберите камеру:",
+    type: "choice",
+    options: [], // Опции будут динамически подставляться
+  },
+
+
+  // {
+  //   name: "quantityOfCameras",
+  //   question: "Введите количество камер",
+  //   type: "input",
+  // },
+  // {
+  //   name: "typeOfCameras",
+  //   question: "Ввыберите камеры",
+  //   type: "choice",
+  //   options: ["LANO-AH320-38GM", "LANO-AH500-24GM", "LANO-AH890-13GM", "LANO-AH40-125GM", "LANO-AH200-60GM"],
+  // },
   {
     name: "typeOfLens",
     question: "Ввыберите объективы",
@@ -28,19 +63,11 @@ export const questions = [
     options: [
       "LANO-FA1220M18-5M",
       "LANO-FA1620M18-5M",
-      "LANO-FA1224M23-5M",
-      "LANO-FA1614M23-5M",
-      "LANO-FA1224M18-10M",
-      "LANO-FA1624M18-10M",
-      "LANO-FA1220M11-12M",
-      "LANO-FA1620M11-12M",
+      "LANO-FA1228M23-8M",
+      "LANO-FA1628M23-8M",
     ],
   },
-  {
-    name: "widthOfPrint",
-    question: "Введите максимальнуюю ширину полотна в мм",
-    type: "input",
-  },
+
   {
     name: "distanceToSystem",
     question:
@@ -84,3 +111,44 @@ export const questions = [
     options: ["На стене", "На оборудовании заказчика", "На полу"]
   },
 ];
+
+
+interface CameraParams {
+  pixel: number;
+  resolutionLength: number;
+  resolutionWidth: number;
+  fps: number;
+}
+
+export const parametrasOfCameras: { [key: string]: CameraParams } = {
+  "LANO-AH40-125GM": {
+    pixel: 0.4,
+    resolutionLength: 540,
+    resolutionWidth: 720,
+    fps: 125.2
+  },
+  "LANO-AH200-60GM/GC": {
+    pixel: 2,
+    resolutionLength: 1240,
+    resolutionWidth: 1624,
+    fps: 60,
+  },
+  "LANO-AH320-38GM/GC": {
+    pixel: 3.2,
+    resolutionLength: 1536,
+    resolutionWidth: 2048,
+    fps: 38.1
+  },
+  "LANO-AH500-24GM/GC": {
+    pixel: 5,
+    resolutionLength: 2048,
+    resolutionWidth: 2448,
+    fps: 24.2
+  },
+  "LANO-AH890-13GM/GC": {
+    pixel: 8.9,
+    resolutionLength: 2160,
+    resolutionWidth: 4096,
+    fps: 13
+  }
+};

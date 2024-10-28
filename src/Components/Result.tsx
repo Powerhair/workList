@@ -3,9 +3,9 @@ import { useSelector } from "react-redux";
 import { RootState } from "../app/store";
 import CreatePdf from "./CreatePdf";
 
+
 const Result = () => {
   const results = useSelector((state: RootState) => state.quiz.results);
-
   const [led, setLed] = useState(0); // Для хранения количества ламп
   const [cameras, setCameras] = useState(0); // Для количества камер
   const [lengthCableFour, setLengthCableFour] = useState(0); // Длина четырехжильного кабеля
@@ -22,6 +22,8 @@ const Result = () => {
   const [encoder, setEncoder] = useState(false); //
   const [lightSignal, setLightSignal] = useState(false); // 
   const [controlCabinetLocation, setControlCabinetLocation] = useState('');
+
+  const camerasCount = results.quantityOfCameras || 0;
 
   const choiceOfSensors = () => {
     if (results.tagSensor === "Да") {
@@ -118,7 +120,7 @@ const Result = () => {
   const ledCalculation = () => {
     // Логика для вычисления количества ламп
     if (results.typeOfSystem === "Камера-код") {
-      setLed(cameras * 2);
+      setLed(camerasCount * 2);
     } else {
       setLed(2);
     }
@@ -137,6 +139,7 @@ const Result = () => {
     }
   };
 
+
   useEffect(() => {
     choiceOfSensors();
     setCameras(Number(results.quantityOfCameras));
@@ -147,14 +150,15 @@ const Result = () => {
     calculateScrewForSensors();
     choiceOfLocationControlCabinet()
     setSlider(
-      cameras +
+      camerasCount +
         led +
         (tagSensor ? 1 : 0) +
         (slotSensor ? 1 : 0) +
         (encoder ? 1 : 0)
     );
-  }, [results, cameras, led, tagSensor, slotSensor, encoder]); // Хук будет запускаться при изменении `results`
+  }, [results, camerasCount, led, tagSensor, slotSensor, encoder]); // Хук будет запускаться при изменении `results`
 
+  console.log(results)
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100 p-4">
       <div className="bg-white shadow-lg rounded-lg p-8 w-full max-w-6xl">
@@ -172,16 +176,16 @@ const Result = () => {
             <div className="mb-6 text-lg">
               <p className="mb-2">
                 <span className="font-semibold">Количество камер:</span>{" "}
-                {cameras}
+                {camerasCount}
               </p>
               <p className="mb-2">
                 <span className="font-semibold">Тип камер:</span>{" "}
-                {results.typeOfCameras}
+                {results.tyeOfCameras}
               </p>
 
               <p className="mb-2">
                 <span className="font-semibold">Количество объективов:</span>{" "}
-                {cameras}
+                {camerasCount}
               </p>
               <p className="mb-2">
                 <span className="font-semibold">Тип объективов:</span>{" "}
@@ -251,13 +255,13 @@ const Result = () => {
               </p>
               <p className="mb-2">
                 <span className="font-semibold">Крепление для камер:</span>{" "}
-                {cameras} шт
+                {camerasCount} шт
               </p>
               <p className="mb-2">
                 <span className="font-semibold">
                   Набор винтов для крепления камер:
                 </span>{" "}
-                {cameras} шт
+                {camerasCount} шт
               </p>
 
               {/* Поле для крепления датчиков */}
@@ -307,7 +311,7 @@ const Result = () => {
         <div className="text-center mt-6 flex flex-col md:flex-row justify-evenly">
           <CreatePdf
             results={results}
-            cameras={cameras}
+            cameras={camerasCount}
             led={led}
             widthLed={widthLed}
             lengthCableFour={lengthCableFour}

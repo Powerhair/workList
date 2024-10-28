@@ -1,37 +1,39 @@
+// answerSlice.ts
+
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-interface AnswerState {
-  results: { [key: string]: string }; // Мапа для ответов, где ключ — это имя вопроса
+interface QuizState {
   currentQuestionIndex: number;
+  results: any; // Adjust the type as necessary
 }
 
-const initialState: AnswerState = {
-  results: {}, // Массив заменен на объект
+const initialState: QuizState = {
   currentQuestionIndex: 0,
+  results: {},
 };
 
-export const answerSlice = createSlice({
+const answerSlice = createSlice({
   name: "quiz",
   initialState,
   reducers: {
-    setAnswer: (
-      state,
-      action: PayloadAction<{ name: string; answer: string }>
-    ) => {
-      // Сохраняем ответ в виде ключ-значение, где ключ — имя вопроса
+    setAnswer(state, action: PayloadAction<{ name: string; answer: string }>) {
       state.results[action.payload.name] = action.payload.answer;
     },
-    nextQuestion: (state) => {
+    setCameraCount(state, action: PayloadAction<number>) {
+      state.results.quantityOfCameras = action.payload; // Store the camera count here
+    },
+    setCameraType(state, action: PayloadAction<string>) {
+      state.results.tyeOfCameras = action.payload; // Store the camera count here
+    },
+    nextQuestion(state) {
       state.currentQuestionIndex += 1;
     },
-    previousQuestion: (state) => {
-      if (state.currentQuestionIndex > 0) {
-        state.currentQuestionIndex -= 1;
-      }
+    previousQuestion(state) {
+      state.currentQuestionIndex -= 1;
     },
   },
 });
 
-export const { setAnswer, nextQuestion, previousQuestion } =
-  answerSlice.actions;
+export const { setAnswer, setCameraCount,setCameraType, nextQuestion, previousQuestion } = answerSlice.actions;
+
 export default answerSlice.reducer;
