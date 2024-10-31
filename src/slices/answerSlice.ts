@@ -4,7 +4,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface QuizState {
   currentQuestionIndex: number;
-  results: any; // Adjust the type as necessary
+  results: any; 
 }
 
 const initialState: QuizState = {
@@ -19,9 +19,6 @@ const answerSlice = createSlice({
     setAnswer(state, action: PayloadAction<{ name: string; answer: string }>) {
       state.results[action.payload.name] = action.payload.answer;
     },
-    setCameraCount(state, action: PayloadAction<number>) {
-      state.results.quantityOfCameras = action.payload; // Store the camera count here
-    },
     setCameraType(state, action: PayloadAction<string>) {
       state.results.tyeOfCameras = action.payload; // Store the camera count here
     },
@@ -34,6 +31,6 @@ const answerSlice = createSlice({
   },
 });
 
-export const { setAnswer, setCameraCount,setCameraType, nextQuestion, previousQuestion } = answerSlice.actions;
+export const { setAnswer,setCameraType, nextQuestion, previousQuestion } = answerSlice.actions;
 
 export default answerSlice.reducer;
