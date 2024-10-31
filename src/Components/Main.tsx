@@ -5,7 +5,7 @@ import {
   setAnswer,
   nextQuestion,
   previousQuestion,
-  setCameraCount,
+  // setCameraCount,
   setCameraType,
 } from "../slices/answerSlice";
 import Result from "./Result";
@@ -25,6 +25,7 @@ const Main = () => {
   const results = useSelector((state: RootState) => state.quiz.results);
 
   const [selectedAnswer, setSelectedAnswer] = useState<string>("");
+  const [cameraCount, setCameraCount] = useState(0)
   const [error, setError] = useState<string>("");
   const [cameraOptions, setCameraOptions] = useState<CameraType[]>([]);
 
@@ -67,7 +68,7 @@ const Main = () => {
           camera.resolutionLength / pixelOnWidthCode;
         const cropCadr: number = countOfCodeInVertical / 2;
         const needOfFps: number = Math.round(fpsOnFullScreen / cropCadr);
-        console.log(camera.fps >= needOfFps); // Добавьте это для отладки
+        // console.log(camera.fps >= needOfFps); // Добавьте это для отладки
 
         if (countOfCameras <= 6 && camera.fps >= needOfFps) {
           tempResultsArray.push({
@@ -116,7 +117,9 @@ const Main = () => {
       // Если это вопрос о выборе типа системы
       if (currentQuestion.name === "typeOfSystem") {
         if (selectedAnswer === "Камера-код") {
-          dispatch(setCameraType("LANO-AH40-125GM"));
+          dispatch(
+            setAnswer({ name: "chooseCamera", answer: "LANO-AH40-125GM" })
+          );
 
           // Добавляем вопросы для "Камера-код", включая количество печатных ручьев и другие
           setDynamicQuestions((prev) => [
@@ -128,6 +131,7 @@ const Main = () => {
             },
             ...prev.slice(currentQuestionIndex + 5), // Пропускаем 1 вопрос после типа системы
           ]);
+
         } else if (selectedAnswer === "Камера-область") {
           // Убедимся, что вопросы идут в правильном порядке для "Камера-область"
           setDynamicQuestions((prev) => [
@@ -193,7 +197,6 @@ const Main = () => {
       handleNext();
     }
   };
-  console.log(currentQuestionIndex);
 
   const renderCameraOptions = () => {
     return cameraOptions.map((camera, idx) => (
@@ -203,7 +206,10 @@ const Main = () => {
           name="camera"
           value={camera.cameraName}
           checked={selectedAnswer === camera.cameraName}
-          onChange={() => setSelectedAnswer(camera.cameraName)}
+          onChange={() => {
+            setSelectedAnswer(camera.cameraName);
+            setCameraCount(camera.countOfCameras);
+          }}
           className="mr-3 h-5 w-5 border-gray-300 text-blue-600 focus:ring-blue-500"
         />
         {camera.cameraName} (Количество камер: {camera.countOfCameras}, FPS:{" "}
@@ -211,6 +217,19 @@ const Main = () => {
       </label>
     ));
   };
+
+  useEffect(() => {
+
+    if ( results.typeOfSystem === "Камера-область") {
+      dispatch(
+        setAnswer({ name: "camerasCount", answer: String(cameraCount) })
+      );
+    }
+
+
+
+  }, [cameraCount])
+  console.log(cameraCount)
 
   if (currentQuestion.name === "chooseCamera") {
     if (cameraOptions.length > 0) {
@@ -303,12 +322,21 @@ const Main = () => {
         </div>
 
         <div className="flex justify-between">
+        {currentQuestion.name === "widthOfPrint" || currentQuestion.name === "countOfPrintModule" ? (
+          <button
+          onClick={() => window.location.reload()}
+            className="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors duration-200"
+          >
+            Перезагрузить
+          </button>
+        ) : (
           <button
             onClick={handlePrevious}
             className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-4 rounded-lg transition-colors duration-200"
           >
             Назад
           </button>
+        )}
           <button
             onClick={handleNext}
             className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors duration-200"

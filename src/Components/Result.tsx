@@ -17,13 +17,15 @@ const Result = () => {
   // Новое состояние для винтов для крепления датчиков
   const [screwForSensors, setScrewForSensors] = useState(0); 
 
-  const [tagSensor, setTagSensor] = useState(false); //
-  const [slotSensor, setSlotSensor] = useState(false); //
-  const [encoder, setEncoder] = useState(false); //
-  const [lightSignal, setLightSignal] = useState(false); // 
+  const [tagSensor, setTagSensor] = useState(false); 
+  const [slotSensor, setSlotSensor] = useState(false); 
+  const [encoder, setEncoder] = useState(false); 
+  const [lightSignal, setLightSignal] = useState(false); 
   const [controlCabinetLocation, setControlCabinetLocation] = useState('');
 
-  const camerasCount = results.quantityOfCameras || 0;
+  const camerasCount = Number(results.camerasCount || results.countOfPrintModule || 0);
+
+  console.log(results)
 
   const choiceOfSensors = () => {
     if (results.tagSensor === "Да") {
@@ -180,7 +182,7 @@ const Result = () => {
               </p>
               <p className="mb-2">
                 <span className="font-semibold">Тип камер:</span>{" "}
-                {results.tyeOfCameras}
+                {results.chooseCamera}
               </p>
 
               <p className="mb-2">
