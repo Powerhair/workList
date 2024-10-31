@@ -18,8 +18,6 @@ interface CameraType {
 }
 
 const Main = () => {
-
-
   const dispatch = useDispatch();
   const currentQuestionIndex = useSelector(
     (state: RootState) => state.quiz.currentQuestionIndex
@@ -34,26 +32,39 @@ const Main = () => {
   const [dynamicQuestions, setDynamicQuestions] = useState(questions);
 
   // Получаем текущий вопрос из массива dynamicQuestions
-  const currentQuestion = dynamicQuestions[currentQuestionIndex] || { name: "", question: "" };
+  const currentQuestion = dynamicQuestions[currentQuestionIndex] || {
+    name: "",
+    question: "",
+  };
 
   const choiceOfCameras = (results: any) => {
-
-
     const PPE: number = 6;
-    const minElementOfCode: number = Number(results.widthOfCode) / Number(results.widthCodeElement);
+    const minElementOfCode: number =
+      Number(results.widthOfCode) / Number(results.widthCodeElement);
     const pixelInMm: number = 1 / (minElementOfCode / PPE);
-    const cameraResolutionInWidth: number = Number(results.widthOfPrint) * pixelInMm;
-    const speedMmPerSecond: number = Math.ceil(Number(results.speed) * (1000 / 60));
-    const fpsOnFullScreen: number = speedMmPerSecond / Number(results.distanceBetweenPoint);
+    const cameraResolutionInWidth: number =
+      Number(results.widthOfPrint) * pixelInMm;
+    const speedMmPerSecond: number = Math.ceil(
+      Number(results.speed) * (1000 / 60)
+    );
+    const fpsOnFullScreen: number =
+      speedMmPerSecond / Number(results.distanceBetweenPoint);
     const pixelOnWidthCode: number = PPE * Number(results.widthCodeElement);
 
-    const tempResultsArray: Array<{ cameraName: string; countOfCameras: number; needOfFps: number }> = [];
+    const tempResultsArray: Array<{
+      cameraName: string;
+      countOfCameras: number;
+      needOfFps: number;
+    }> = [];
 
     for (const cameraName in parametrasOfCameras) {
       if (parametrasOfCameras.hasOwnProperty(cameraName)) {
         const camera = parametrasOfCameras[cameraName];
-        const countOfCameras: number = Math.ceil(cameraResolutionInWidth / camera.resolutionWidth);
-        const countOfCodeInVertical: number = camera.resolutionLength / pixelOnWidthCode;
+        const countOfCameras: number = Math.ceil(
+          cameraResolutionInWidth / camera.resolutionWidth
+        );
+        const countOfCodeInVertical: number =
+          camera.resolutionLength / pixelOnWidthCode;
         const cropCadr: number = countOfCodeInVertical / 2;
         const needOfFps: number = Math.round(fpsOnFullScreen / cropCadr);
         console.log(camera.fps >= needOfFps); // Добавьте это для отладки
@@ -85,7 +96,11 @@ const Main = () => {
   useEffect(() => {
     if (currentQuestion.name === "chooseCamera") {
       // Убедитесь, что все необходимые поля заполнены
-      if (results.widthOfPrint && results.widthCodeElement && results.distanceBetweenPoint) {
+      if (
+        results.widthOfPrint &&
+        results.widthCodeElement &&
+        results.distanceBetweenPoint
+      ) {
         calculateCameraOptions(results);
       }
     }
@@ -94,48 +109,62 @@ const Main = () => {
   const handleNext = () => {
     if (selectedAnswer && currentQuestion.name) {
       // Сохраняем ответ
-      dispatch(setAnswer({ name: currentQuestion.name, answer: selectedAnswer }));
-  
+      dispatch(
+        setAnswer({ name: currentQuestion.name, answer: selectedAnswer })
+      );
+
       // Если это вопрос о выборе типа системы
       if (currentQuestion.name === "typeOfSystem") {
         if (selectedAnswer === "Камера-код") {
           dispatch(setCameraType("LANO-AH40-125GM"));
-  
+
           // Добавляем вопросы для "Камера-код", включая количество печатных ручьев и другие
-          setDynamicQuestions(prev => [
+          setDynamicQuestions((prev) => [
             ...prev.slice(0, currentQuestionIndex + 1),
-            { name: "countOfPrintModule", question: "Введите количество печатных ручьев", type: "input" },
-            ...prev.slice(currentQuestionIndex + 5) // Пропускаем 1 вопрос после типа системы
+            {
+              name: "countOfPrintModule",
+              question: "Введите количество печатных ручьев",
+              type: "input",
+            },
+            ...prev.slice(currentQuestionIndex + 5), // Пропускаем 1 вопрос после типа системы
           ]);
         } else if (selectedAnswer === "Камера-область") {
           // Убедимся, что вопросы идут в правильном порядке для "Камера-область"
-          setDynamicQuestions(prev => [
+          setDynamicQuestions((prev) => [
             ...prev.slice(0, currentQuestionIndex + 1),
-            { name: "widthOfPrint", question: "Введите максимальную ширину полотна в мм", type: "input" },  // Сначала ширина полотна
-            { name: "speed", question: "Введите скорость полотна в м/мин", type: "input" }, // Затем скорость полотна
-            ...prev.slice(currentQuestionIndex + 1)
+            {
+              name: "widthOfPrint",
+              question: "Введите максимальную ширину полотна в мм",
+              type: "input",
+            }, // Сначала ширина полотна
+            {
+              name: "speed",
+              question: "Введите скорость полотна в м/мин",
+              type: "input",
+            }, // Затем скорость полотна
+            ...prev.slice(currentQuestionIndex + 1),
           ]);
         }
       }
-  
+
       // Переходим к следующему вопросу
       setTimeout(() => {
         dispatch(nextQuestion());
       }, 0);
-  
+
       setSelectedAnswer("");
       setError("");
     } else {
       setError("Невозможно сохранить ответ без имени вопроса.");
     }
   };
-  
-  
 
   const handlePrevious = () => {
-    dispatch(previousQuestion());
-    setSelectedAnswer("");
-    setError("");
+    if (currentQuestionIndex !== 0) {
+      dispatch(previousQuestion());
+      setSelectedAnswer("");
+      setError("");
+    }
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -164,13 +193,11 @@ const Main = () => {
       handleNext();
     }
   };
+  console.log(currentQuestionIndex);
 
   const renderCameraOptions = () => {
     return cameraOptions.map((camera, idx) => (
-      <label
-        key={idx}
-        className="block mb-4 text-lg font-medium text-gray-700"
-      >
+      <label key={idx} className="block mb-4 text-lg font-medium text-gray-700">
         <input
           type="radio"
           name="camera"
@@ -179,7 +206,8 @@ const Main = () => {
           onChange={() => setSelectedAnswer(camera.cameraName)}
           className="mr-3 h-5 w-5 border-gray-300 text-blue-600 focus:ring-blue-500"
         />
-        {camera.cameraName} (Количество камер: {camera.countOfCameras}, FPS: {camera.needOfFps})
+        {camera.cameraName} (Количество камер: {camera.countOfCameras}, FPS:{" "}
+        {camera.needOfFps})
       </label>
     ));
   };
@@ -219,13 +247,12 @@ const Main = () => {
               Вы ввели неверные данные
             </h2>
             <button
-            onClick={handlePrevious}
-            className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-4 rounded-lg transition-colors duration-200"
-          >
-            Назад
-          </button>
+              onClick={handlePrevious}
+              className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-4 rounded-lg transition-colors duration-200"
+            >
+              Назад
+            </button>
           </div>
-          
         </div>
       );
     }
