@@ -1,7 +1,8 @@
 import React from "react";
+
+import {BotLink} from "../utils/config"
 const pdfMake = require("pdfmake/build/pdfmake");
 const pdfFonts = require("pdfmake/build/vfs_fonts");
-
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
 interface CreatePdfProps {
@@ -116,7 +117,7 @@ const CreatePdf: React.FC<CreatePdfProps> = (props) => {
     };
 
     console.log(pdfData)
-    fetch('http://127.0.0.1:3001/upload', {
+    fetch(`${BotLink}/upload`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'

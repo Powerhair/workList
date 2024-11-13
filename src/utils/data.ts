@@ -1,3 +1,4 @@
+import { NumberLiteralType } from "typescript";
 
 
 export const questions = [
@@ -6,25 +7,32 @@ export const questions = [
     question: "Введите название типографии",
     type: "input",
   },
+
   {
     name: "typeOfSystem",
-    question: "Какой тип системы?",
+    question: "Тип системы?",
     type: "choice",
-    options: ["Камера-код", "Камера-область"],
+    options: ["Камера-Код", "Камера-Область"],
   },
-  // {
-  //   name: "widthOfPrint",
-  //   question: "Введите максимальнуюю ширину полотна в мм",
-  //   type: "input",
-  // },
-  // {
-  //   name: "speed",
-  //   question: "Введите скорость полотна в м/мин",
-  //   type: "input",
-  // },
+  {
+    name: "validationStreams",
+    question: "Количество ручьев валидации?",
+    type: "input",
+  },
+  {
+    name: "widthOfPrint",
+    question: "Введите максимальную ширину полотна в мм",
+    type: "input",
+  }, 
+  {
+    name: "speed",
+    question: "Введите скорость полотна в м/мин",
+    type: "input",
+  }, 
+
   {
     name: "widthCodeElement",
-    question: "Сколько элементов кода по ширине?",
+    question: "Количество модулей по ширине кода?",
     type: "input",
   },
   {
@@ -41,31 +49,14 @@ export const questions = [
     name: "chooseCamera",
     question: "Выберите камеру:",
     type: "choice",
-    options: [], // Опции будут динамически подставляться
+    options: [], 
   },
 
-
-  // {
-  //   name: "quantityOfCameras",
-  //   question: "Введите количество камер",
-  //   type: "input",
-  // },
-  // {
-  //   name: "typeOfCameras",
-  //   question: "Ввыберите камеры",
-  //   type: "choice",
-  //   options: ["LANO-AH320-38GM", "LANO-AH500-24GM", "LANO-AH890-13GM", "LANO-AH40-125GM", "LANO-AH200-60GM"],
-  // },
   {
     name: "typeOfLens",
-    question: "Ввыберите объективы",
+    question: "Выберите объективы",
     type: "choice",
-    options: [
-      "LANO-FA1220M18-5M",
-      "LANO-FA1620M18-5M",
-      "LANO-FA1228M23-8M",
-      "LANO-FA1628M23-8M",
-    ],
+    options: [],
   },
 
   {
@@ -115,6 +106,7 @@ export const questions = [
 
 interface CameraParams {
   pixel: number;
+  imageSize: string,
   resolutionLength: number;
   resolutionWidth: number;
   fps: number;
@@ -123,32 +115,71 @@ interface CameraParams {
 export const parametrasOfCameras: { [key: string]: CameraParams } = {
   "LANO-AH40-125GM": {
     pixel: 0.4,
+    imageSize: "1/2.9",
     resolutionLength: 540,
     resolutionWidth: 720,
     fps: 125.2
   },
-  "LANO-AH200-60GM/GC": {
-    pixel: 2,
-    resolutionLength: 1240,
-    resolutionWidth: 1624,
-    fps: 60,
-  },
+  // "LANO-AH200-60GM/GC": {
+  //   pixel: 2,
+  //   imageSize: "1/1.7",
+  //   resolutionLength: 1240,
+  //   resolutionWidth: 1624,
+  //   fps: 60,
+  // },
   "LANO-AH320-38GM/GC": {
     pixel: 3.2,
+    imageSize: "1/1.8",
     resolutionLength: 1536,
     resolutionWidth: 2048,
     fps: 38.1
   },
   "LANO-AH500-24GM/GC": {
     pixel: 5,
+    imageSize: "2/3",
     resolutionLength: 2048,
     resolutionWidth: 2448,
     fps: 24.2
   },
   "LANO-AH890-13GM/GC": {
     pixel: 8.9,
+    imageSize: "1",
     resolutionLength: 2160,
     resolutionWidth: 4096,
     fps: 13
   }
 };
+
+interface LensParams {
+  pixel: number;
+  focalLength: number;
+  imageFormat: string;
+  minDistance: number;
+}
+
+export const parametrasOfLens : { [key: string]: LensParams} = {
+  "LANO-FA1220M18-5M": {
+    pixel: 5,
+    focalLength: 12,
+    imageFormat: "1/1.8",
+    minDistance: 10
+  },
+  "LANO-FA1620M18-5M": {
+    pixel: 5,
+    focalLength: 16,
+    imageFormat: "1/1.8",
+    minDistance: 10
+  },
+  "LANO-FA1228M23-8M": {
+    pixel: 8,
+    focalLength: 12,
+    imageFormat: "1/1.8",
+    minDistance: 10
+  },
+  "LANO-FA1628M23-8M": {
+    pixel: 8,
+    focalLength: 16,
+    imageFormat: "1/1.8",
+    minDistance: 10
+  }
+}

@@ -23,7 +23,7 @@ const Result = () => {
   const [lightSignal, setLightSignal] = useState(false); 
   const [controlCabinetLocation, setControlCabinetLocation] = useState('');
 
-  const camerasCount = Number(results.camerasCount || results.countOfPrintModule || 0);
+  const camerasCount = Number(results.camerasCount || results.validationStreams || 0);
 
   console.log(results)
 
@@ -55,7 +55,7 @@ const Result = () => {
       setControlCabinetLocation("Крепеж для установки шкафа на стену")
     } else if (results.controlLocation === "На оборудовании заказчика") {
       setControlCabinetLocation("Крепеж для установки шкафа на оборудование заказчика")
-    } else if (results.controlCabinetLocation === "На полу") {
+    } else if (results.controlLocation === "На полу") {
       setControlCabinetLocation("Каркас из профиля 40х40 для шкафа")
     }
   }
@@ -121,7 +121,7 @@ const Result = () => {
 
   const ledCalculation = () => {
     // Логика для вычисления количества ламп
-    if (results.typeOfSystem === "Камера-код") {
+    if (results.chooseCamera === "LANO-AH40-125GM") {
       setLed(camerasCount * 2);
     } else {
       setLed(2);
@@ -130,14 +130,16 @@ const Result = () => {
 
   const choiceWidthLed = () => {
     const widthOfPrint = Number(results.widthOfPrint);
-    if (results.typeOfSystem === "Камера-код") {
+    if (results.chooseCamera === "LANO-AH40-125GM") {
       setWidthLed(100);
     } else {
-      if (widthOfPrint <= 350) {
-        setWidthLed(400);
-      } else if (350 < widthOfPrint) {
-        setWidthLed(600);
-      }
+      if (widthOfPrint <= 300) {
+        setWidthLed(300);
+      } else if (300 < widthOfPrint && widthOfPrint <= 500) {
+        setWidthLed(500);
+      } else if (500 < widthOfPrint) {
+        setWidthLed(1000)
+      } 
     }
   };
 
@@ -286,6 +288,11 @@ const Result = () => {
                 <span className="font-semibold">
                   Шарнирный соединитель 20х20:
                 </span>{" "}{led*2} шт
+              </p>
+              <p className="mb-2">
+                <span className="font-semibold">
+                  Заглушки под 20 профиль:
+                </span>{" "}25 шт
               </p>
 
               <p className="mb-2">
